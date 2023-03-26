@@ -31,11 +31,11 @@ def test_api():
         'amount': '100.0',
         'timestamp': datetime(2023, 1, 4).isoformat(),  # technical field to make tests possible
     }
-    txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
+    txn_resp = requests.post(f'http://localhost:8000/v1/user/{user["id"]}/transaction', json=txn)
     assert txn_resp.status_code == 200
     assert_balance(user, '100.00')
 
-    detail_resp = requests.get(f'http://localhost:8000/v1/transaction/{txn["uid"]}')
+    detail_resp = requests.get(f'http://localhost:8000/v1/user/{user["id"]}/transaction/{txn["uid"]}')
     assert detail_resp.json()['type'] == 'DEPOSIT'
     assert detail_resp.json()['amount'] == '100.00'
 
@@ -45,8 +45,8 @@ def test_api():
         'amount': '50.0',
         'timestamp': datetime(2023, 1, 5).isoformat(),  # technical field to make tests possible
     }
-    txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
-    txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
+    txn_resp = requests.post(f'http://localhost:8000/v1/user/{user["id"]}/transaction', json=txn)
+    txn_resp = requests.post(f'http://localhost:8000/v1/user/{user["id"]}/transaction', json=txn)
     assert txn_resp.status_code == 200
     assert_balance(user, '50.00')
 
@@ -57,7 +57,7 @@ def test_api():
         'amount': '60.0',
         'timestamp': datetime.utcnow().isoformat(),  # technical field to make tests possible
     }
-    txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
+    txn_resp = requests.post(f'http://localhost:8000/v1/user/{user["id"]}/transaction', json=txn)
     assert txn_resp.status_code == 402  # insufficient funds
     assert_balance(user, '50.00')
 
@@ -67,8 +67,12 @@ def test_api():
         'amount': '10.0',
         'timestamp': datetime(2023, 2, 5).isoformat(),  # technical field to make tests possible
     }
-    txn_resp = requests.post('http://localhost:8000/v1/transaction', json=txn)
+    txn_resp = requests.post(f'http://localhost:8000/v1/user/{user["id"]}/transaction', json=txn)
     assert txn_resp.status_code == 200
     assert_balance(user, '40.00')
 
     assert_balance(user, '50.00', date='2023-01-30T00:00:00.00000000')
+
+
+if __name__ == '__main__':
+    test_api()

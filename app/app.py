@@ -1,5 +1,5 @@
 from aiohttp import web
-from models_schema import api_db as db
+from app.models import db
 
 app = web.Application()
 app['db'] = db
